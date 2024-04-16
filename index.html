@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timestamps from MongoDB ObjectId's</title>
+  <meta name="description" content="Use a MongoDB ObjectId to find a timestamp, or use a date to generate an ObjectId.">
+  <meta name="keywords" content="MongoDB, Mongo, ObjectId, Object Id, Timestamps">
+  <meta name="author" content="Benji Trosch">
+  <link rel="stylesheet" href="src/styles.css" preload>
+</head>
+
+<body>
+  <header>
+    <h1>ObjectId Timestamp Calculator</h1>
+    <p>Find ISO timestamps embedded in
+      <a href="https://www.mongodb.com/docs/manual/reference/method/ObjectId/" target="_blank">
+        MongoDB ObjectId's
+      </a>
+    </p>
+  </header>
+
+  <div class="container">
+
+    <!-- ObjectId input/output  -->
+    <fieldset>
+      <legend>
+        <h2>MongoDB ObjectId</h2>
+      </legend>
+      <label for="object-id-input" class="hidden">ObjectId</label>
+      <textarea id="object-id-input" name="object-id-input" maxlength="36"></textarea>
+      <span id="valid-object-id" class="valid-object-id">Successfully Validated ObjectId</span>
+      <div id="error-log" class="error-log"></div>
+    </fieldset>
+
+    <!-- Time input/output -->
+    <fieldset>
+      <legend>
+        <h2>Components</h2>
+      </legend>
+      <div>
+        <label for="date-input">Timestamp <small>4-byte ISO timestamp (UTC-4)</small></label>
+        <input type="text" id="date-input" name="date-input">
+
+        <label for="uuid-input">Random Value <small>5-byte random value</small></label>
+        <input type="text" id="uuid-input" name="uuid-input">
+
+        <label for="count-input">Count <small>3-byte random incrementing counter</small></label>
+        <input type="text" id="count-input" name="count-input">
+      </div>
+      <button disabled id="copy-button" aria-label="Copy ISO timestamp to clipboard">
+        Copy timestamp
+      </button>
+    </fieldset>
+
+  </div>
+
+  <script type="module" src="src/index.ts" defer></script>
+</body>
+
+</html>

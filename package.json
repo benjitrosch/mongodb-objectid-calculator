@@ -1,0 +1,13 @@
+{
+  "name": "objid",
+  "version": "1.0.0",
+  "author": "Benji",
+  "scripts": {
+    "start": "vite dev",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8"
+  }
+}
