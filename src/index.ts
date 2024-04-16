@@ -41,19 +41,19 @@ function parseObjectIdInput(input: string): ObjectIdParseResult | ObjectIdParseE
     return { errors }
   }
 
-  const uuid = id.slice(8, 18)
+  const random = id.slice(8, 18)
   const count = id.slice(18, 24)
 
-  return [date, uuid, count]
+  return [date, random, count]
 }
 
 function isObjectIdParseResult(result: any): result is ObjectIdParseResult {
   const isTuple = Array.isArray(result) && result.length === 3
   const hasDate = result[0] instanceof Date
-  const hasUuid = typeof result[1] === 'string'
+  const hasRandom = typeof result[1] === 'string'
   const hasCount = typeof result[2] === 'string'
 
-  return isTuple && hasDate && hasUuid && hasCount
+  return isTuple && hasDate && hasRandom && hasCount
 }
 
 function isObjectIdParseErrors(result: any): result is ObjectIdParseErrors {
@@ -91,7 +91,7 @@ const objectIdInput = document.getElementById("object-id-input") as HTMLTextArea
 const validObjectId = document.getElementById("valid-object-id") as HTMLSpanElement
 const errorLog = document.getElementById("error-log") as HTMLDivElement
 const dateInput = document.getElementById("date-input") as HTMLInputElement
-const uuidInput = document.getElementById("uuid-input") as HTMLInputElement
+const randomInput = document.getElementById("random-input") as HTMLInputElement
 const countInput = document.getElementById("count-input") as HTMLInputElement
 const copyButton = document.getElementById("copy-button") as HTMLButtonElement
 
@@ -99,7 +99,7 @@ assert(!!objectIdInput, 'Could not find ObjectIdInput textarea element')
 assert(!!validObjectId, 'Could not find ValidObjectId span element')
 assert(!!errorLog, 'Could not find errorLog div element')
 assert(!!dateInput, 'Could not find dateInput input element')
-assert(!!uuidInput, 'Could not find uuidInput input element')
+assert(!!randomInput, 'Could not find randomInput input element')
 assert(!!countInput, 'Could not find countInput input element')
 assert(!!copyButton, 'Could not find copyButton button element')
 
@@ -127,15 +127,28 @@ objectIdInput.addEventListener('input', function(_) {
   const result = parseObjectIdInput(objectIdInput.value)
 
   if (isObjectIdParseResult(result)) {
-    const [date, uuid, count] = result
+    const [date, random, count] = result
 
     validObjectId.style.display = 'block'
     copyButton.disabled = false
 
     dateInput.value = date.toISOString()
-    uuidInput.value = uuid
+    randomInput.value = random
     countInput.value = count
 
+    dateInput.style.webkitAnimation = 'none'
+    randomInput.style.webkitAnimation = 'none'
+    countInput.style.webkitAnimation = 'none'
+
+    setTimeout(function() {
+      dateInput.style.webkitAnimation = ''
+      randomInput.style.webkitAnimation = ''
+      countInput.style.webkitAnimation = ''
+
+      dateInput.style.animationPlayState = 'running'
+      randomInput.style.animationPlayState = 'running'
+      countInput.style.animationPlayState = 'running'
+    }, 10)
   } else if (isObjectIdParseErrors(result)) {
     errorLog.style.display = 'block'
     errorLog.innerHTML += 'Errors:'
@@ -143,7 +156,7 @@ objectIdInput.addEventListener('input', function(_) {
   }
 })
 
-const inputs = [dateInput, uuidInput, countInput]
+const inputs = [dateInput, randomInput, countInput]
 
 inputs.forEach((input) => {
   input.addEventListener('input', function(_) {
@@ -152,11 +165,18 @@ inputs.forEach((input) => {
     }
 
     const date = new Date(dateInput.value)
-    const uuid = uuidInput.value
+    const random = randomInput.value
     const count = parseInt(countInput.value)
 
-    const objectId = valuesToObjectId(date, uuid, count)
+    const objectId = valuesToObjectId(date, random, count)
     updateObjectIdInput(objectId)
+
+    objectIdInput.style.webkitAnimation = 'none'
+
+    setTimeout(function() {
+      objectIdInput.style.webkitAnimation = ''
+      objectIdInput.style.animationPlayState = 'running'
+    }, 10)
   })
 })
 
@@ -166,14 +186,12 @@ copyButton.addEventListener('click', function(_) {
 
   navigator.clipboard.writeText(dateInput.value)
 
-  if (window && window.getSelection) {
-    window.getSelection()?.removeAllRanges()
-  } else if (document && Object.prototype.hasOwnProperty.call(document, 'selection')) {
-    (document as any).selection.empty()
-  }
-
+  copyButton.focus()
   copyButton.innerText = "Copied to clipboard"
-  setTimeout(() => copyButton.innerText = "Copy timestamp", 2000)
+
+  setTimeout(function() {
+    copyButton.innerText = "Copy timestamp"
+  }, 2000)
 })
 
 function updateObjectIdInput(value: string) {
